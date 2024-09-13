@@ -54,3 +54,40 @@ response = agent.chat(question)
 print(response)
 
 ```
+
+## Using LangChain to Implement ReAct 
+
+```python
+import os
+from langchain.agents import initialize_agent, Tool
+from langchain.llms import OpenAI
+
+# Define Tools
+def lookup_wikipedia(query):
+    if query.lower() == 'paris':
+        return "Paris is the capital city of France, known for its art, gastronomy, and culture. Founded in the 3rd century BC..."
+    else:
+        return "No information found."
+
+wikipedia_tool = Tool(
+    name='Wikipedia',
+    func=lookup_wikipedia,
+    description='Provides summaries from Wikipedia articles.'
+)
+
+tools = [wikipedia_tool]
+
+# Initialize Agent
+llm = OpenAI(temperature=0)
+agent = initialize_agent(
+    tools=tools,
+    llm=llm,
+    agent="zero-shot-react-description",
+    verbose=True
+)
+
+# Run Agent
+question = "What is the capital of France, and can you provide a brief history of the city?"
+response = agent.run(question)
+print(response)
+```
